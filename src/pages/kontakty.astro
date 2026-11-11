@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Blocks from '../components/Blocks.astro';
+import BookingButton from '../components/BookingButton.astro';
+import { getPage } from '../lib/content';
+import { absoluteUrl, site, contacts, orTodo, TODO, isTodo, instagramUrl, telegramUrl, mapUrl } from '../lib/site';
+
+const page = await getPage('kontakty');
+const phone = contacts.phone?.trim();
+const telHref = phone ? `tel:${phone.replace(/[^\d+]/g, '')}` : '';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'HealthAndBeautyBusiness',
+  name: site.site.title,
+  url: absoluteUrl('/kontakty/'),
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Київ',
+    ...(contacts.addressFull ? { streetAddress: contacts.addressFull } : {}),
+    addressCountry: 'UA',
+  },
+  ...(phone ? { telephone: phone } : {}),
+  ...(instagramUrl || telegramUrl ? { sameAs: [instagramUrl, telegramUrl].filter(Boolean) } : {}),
+};
+---
+
+<BaseLayout
+  title={page.data.seoTitle || `${page.data.title} — ${site.site.title}`}
+  description={page.data.seoDescription || site.site.defaultDescription}
+  schema={schema}
+>
+  <section class="border-b border-line bg-milk/40">
+    <div class="container-page py-14 md:py-20 lg:py-24">
+      <p class="eyebrow mb-5">{page.data.eyebrow}</p>
+      <h1 class="display-xl max-w-3xl font-light text-ink">{page.data.title}</h1>
+      <p class="mt-6 max-w-2xl text-[1rem] leading-relaxed text-muted">{page.data.lead}</p>
+    </div>
+  </section>
+
+  <section id="zapys" class="container-page scroll-mt-24 py-14 md:py-20">
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-7">
+        <div class="grid gap-8 sm:grid-cols-2">
+          <div class="border-t border-line pt-4">
+            <p class="eyebrow mb-2">Адреса</p>
+            {
+              contacts.addressFull ? (
+                <p class="text-[0.98rem] leading-relaxed text-ink">{contacts.addressFull}</p>
+              ) : (
+                <p class="text-[0.98rem] leading-relaxed text-ink">
+                  {contacts.addressLine}
+                </p>
+              )
+            }
+            {isTodo(contacts.addressFull) && (
+              <p class="mt-2 text-xs text-bronze-dark">{TODO}</p>
+            )}
+          </div>
+
+          <div class="border-t border-line pt-4">
+            <p class="eyebrow mb-2">Телефон</p>
+            {
+              phone && telHref ? (
+                <a href={telHref} class="text-[0.98rem] text-ink underline decoration-line underline-offset-4 hover:text-bronze-dark">
+                  {contacts.phoneDisplay || phone}
+                </a>
+              ) : (
+                <p class="text-[0.98rem] text-bronze-dark">{TODO}</p>
+              )
+            }
+          </div>
+
+          <div class="border-t border-line pt-4">
+            <p class="eyebrow mb-2">Графік роботи</p>
+            {
+              site.schedule.rows.length > 0 ? (
+                <ul class="space-y-1.5 text-[0.95rem] text-ink">
+                  {site.schedule.rows.map((row: { days: string; hours: string }) => (
+                    <li class="flex justify-between gap-4">
+                      <span>{row.days}</span>
+                      <span class="text-muted">{row.hours}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p class="text-[0.98rem] text-bronze-dark">{TODO}</p>
+              )
+            }
+          </div>
+
+          <div class="border-t border-line pt-4">
+            <p class="eyebrow mb-2">Запис</p>
+            <p class="text-[0.95rem] leading-relaxed text-ink">
+              Через месенджер — Telegram або Instagram Direct. Візит за попереднім записом.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <BookingButton />
+          {
+            instagramUrl && (
+              <a
+                href={instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center gap-2 rounded-full border border-ink/20 px-6 py-3.5 text-[0.8rem] tracking-[0.1em] uppercase text-ink hover:border-bronze hover:text-bronze-dark"
+              >
+                Instagram Direct
+              </a>
+            )
+          }
+          {
+            telegramUrl && (
+              <a
+                href={telegramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center gap-2 rounded-full border border-ink/20 px-6 py-3.5 text-[0.8rem] tracking-[0.1em] uppercase text-ink hover:border-bronze hover:text-bronze-dark"
+              >
+                Telegram
+              </a>
+            )
+          }
+        </div>
+
+        {!instagramUrl && !telegramUrl && (
+          <p class="mt-6 text-xs text-bronze-dark">
+            Посилання на месенджери буде додано найближчим часом — {TODO}.
+          </p>
+        )}
+      </div>
+
+      <div class="lg:col-span-5">
+        <div class="border border-line bg-cream">
+          {
+            contacts.mapEmbedUrl ? (
+              <iframe
+                src={contacts.mapEmbedUrl}
+                title="Мапа з розташуванням кабінету"
+                class="h-[22rem] w-full border-0"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              />
+            ) : (
+              <div class="photo-placeholder flex h-[22rem] flex-col items-center justify-center gap-3 px-8 text-center">
+                <p class="text-[0.6rem] uppercase tracking-[0.3em] text-bronze-dark/60">Карта</p>
+                <p class="max-w-[26ch] font-display text-lg leading-snug text-bronze-dark/80">
+                  Тут буде інтерактивна карта після уточнення адреси
+                </p>
+              </div>
+            )
+          }
+          <div class="border-t border-line p-5">
+            {
+              mapUrl ? (
+                <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="text-sm text-bronze-dark underline decoration-line underline-offset-4">
+                  Прокласти маршрут →
+                </a>
+              ) : (
+                <p class="text-xs leading-relaxed text-muted">
+                  Посилання на маршрут додамо разом з адресою. {TODO}.
+                </p>
+              )
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="border-t border-line">
+    <Blocks blocks={page.data.blocks ?? []} />
+  </div>
+</BaseLayout>

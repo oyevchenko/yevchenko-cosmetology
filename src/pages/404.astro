@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BookingButton from '../components/BookingButton.astro';
+import { withBase } from '../lib/site';
+---
+
+<BaseLayout title="Сторінку не знайдено — YEVCHENKO COSMETOLOGY" description="Такої сторінки немає. Перейдіть на головну або до переліку послуг." noindex>
+  <section class="container-page flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
+    <p class="eyebrow mb-4">Помилка 404</p>
+    <h1 class="display-l text-ink">Такої сторінки немає</h1>
+    <p class="mt-5 max-w-md text-[0.95rem] leading-relaxed text-muted">
+      Можливо, адреса змінилася. Перейдіть до переліку послуг або напишіть у месенджер —
+      допоможемо знайти потрібне.
+    </p>
+    <div class="mt-9 flex flex-wrap justify-center gap-3">
+      <BookingButton />
+      <a href={withBase("/posluhy/")} class="inline-flex items-center rounded-full border border-ink/20 px-6 py-3.5 text-[0.8rem] tracking-[0.1em] uppercase text-ink hover:border-bronze hover:text-bronze-dark">Послуги</a>
+    </div>
+  </section>
+</BaseLayout>

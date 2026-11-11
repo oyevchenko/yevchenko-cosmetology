@@ -1,0 +1,101 @@
+---
+import { site, contacts, orTodo, withBase } from '../lib/site';
+
+const year = new Date().getFullYear();
+const { instagramUrl, telegramUrl, phoneDisplay, addressLine } = contacts;
+const scheduleRows = site.schedule.rows ?? [];
+---
+
+<footer class="border-t border-line bg-milk/60">
+  <div class="container-page grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4 lg:py-20">
+    <div class="lg:col-span-2">
+      <p class="font-display text-2xl tracking-[0.14em]">YEVCHENKO</p>
+      <p class="mt-1 text-[0.55rem] font-medium tracking-[0.42em] text-muted">COSMETOLOGY</p>
+      <p class="mt-6 max-w-sm text-sm leading-relaxed text-muted">
+        {site.site.tagline}. Професійна косметологія на основі медичної освіти та
+        індивідуального підходу.
+      </p>
+    </div>
+
+    <nav aria-label="Навігація у футері" class="text-sm">
+      <p class="eyebrow mb-4">Розділи</p>
+      <ul class="space-y-2.5">
+        {
+          site.navigation.map((item) => (
+            <li>
+              <a href={withBase(item.href)} class="text-ink/80 transition-colors hover:text-bronze-dark">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="text-sm">
+      <p class="eyebrow mb-4">Контакти</p>
+      <ul class="space-y-2.5 text-ink/80">
+        <li>{orTodo(addressLine)}</li>
+        <li>
+          {
+            phoneDisplay ? (
+              <a href={`tel:${contacts.phone.replace(/[^\d+]/g, '')}`} class="hover:text-bronze-dark">
+                {phoneDisplay}
+              </a>
+            ) : (
+              <span class="text-muted">{orTodo('')}</span>
+            )
+          }
+        </li>
+        {
+          scheduleRows.length > 0 ? (
+            scheduleRows.map((row: { days: string; hours: string }) => (
+              <li>{row.days}: {row.hours}</li>
+            ))
+          ) : (
+            <li class="text-muted">{site.schedule.note}</li>
+          )
+        }
+      </ul>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        {
+          telegramUrl && (
+            <a
+              href={telegramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[0.78rem] tracking-[0.06em] text-bronze-dark underline decoration-line underline-offset-4 hover:decoration-bronze"
+            >
+              Telegram
+            </a>
+          )
+        }
+        {
+          instagramUrl && (
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[0.78rem] tracking-[0.06em] text-bronze-dark underline decoration-line underline-offset-4 hover:decoration-bronze"
+            >
+              Instagram
+            </a>
+          )
+        }
+        <a
+          href={withBase("/kontakty/#zapys")}
+          class="text-[0.78rem] tracking-[0.06em] text-bronze-dark underline decoration-line underline-offset-4 hover:decoration-bronze"
+          >Запис</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t border-line/70">
+    <div class="container-page flex flex-col gap-4 py-6 text-xs leading-relaxed text-muted md:flex-row md:items-center md:justify-between">
+      <p>© {year} {site.footer.copyright}. Усі права застережено.</p>
+      <p class="max-w-xl md:text-right">{site.footer.legalNote}</p>
+    </div>
+  </div>
+</footer>

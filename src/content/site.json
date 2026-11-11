@@ -1,0 +1,57 @@
+{
+  "site": {
+    "url": "https://oyevchenko.github.io/yevchenko-cosmetology",
+    "title": "YEVCHENKO COSMETOLOGY",
+    "tagline": "Приватний косметологічний кабінет у Києві, Поділ",
+    "defaultTitle": "YEVCHENKO COSMETOLOGY — косметологічний кабінет у Києві",
+    "defaultDescription": "Приватний косметологічний кабінет у Києві на Подолі. Лікарка-дерматовенерологиня Алла Євченко: професійний догляд за шкірою, Biologique Recherche, ферментотерапія DMK. Запис через Telegram та Instagram.",
+    "ogImage": ""
+  },
+
+  "specialist": {
+    "name": "Алла Євченко",
+    "title": "Лікарка-дерматовенерологиня, косметологиня",
+    "since": "2000"
+  },
+
+  "contacts": {
+    "phone": "",
+    "phoneDisplay": "",
+    "email": "",
+    "addressLine": "Київ, Поділ",
+    "addressFull": "",
+    "mapUrl": "",
+    "mapEmbedUrl": "",
+    "instagramHandle": "",
+    "instagramUrl": "",
+    "telegramHandle": "",
+    "telegramUrl": "",
+    "viberUrl": ""
+  },
+
+  "schedule": {
+    "note": "Графік роботи уточнюється",
+    "rows": []
+  },
+
+  "navigation": [
+    { "label": "Головна", "href": "/" },
+    { "label": "Про мене", "href": "/pro-mene/" },
+    { "label": "Послуги", "href": "/posluhy/" },
+    { "label": "Biologique Recherche", "href": "/biologique-recherche/" },
+    { "label": "DMK", "href": "/dmk/" },
+    { "label": "Домашній догляд", "href": "/domashnii-dohliad/" },
+    { "label": "Контакти", "href": "/kontakty/" }
+  ],
+
+  "footer": {
+    "legalNote": "Інформація на сайті має ознайомлювальний характер і не є медичною консультацією. Рекомендації щодо процедур надаються індивідуально під час консультації.",
+    "copyright": "YEVCHENKO COSMETOLOGY"
+  },
+
+  "analytics": {
+    "note": "Аналітику підключити після погодження з власницею. Можна додати Plausible/Umami (без cookie) у src/layouts/BaseLayout.astro.",
+    "plausibleDomain": "",
+    "gaMeasurementId": ""
+  }
+}

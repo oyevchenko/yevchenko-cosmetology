@@ -1,0 +1,80 @@
+---
+import { site, bookingHref, bookingIsExternal, contactHref, withBase } from '../lib/site';
+
+const nav = site.navigation;
+const current = Astro.url.pathname;
+const isActive = (href: string) => {
+  const resolved = withBase(href);
+  const home = withBase('/');
+  if (href === '/' || resolved === home) {
+    return current === home || current === home.replace(/\/$/, '');
+  }
+  return current.startsWith(resolved);
+};
+---
+
+<header class="sticky top-0 z-40 border-b border-line/70 bg-cream/85 backdrop-blur-md">
+  <div class="container-page flex items-center justify-between gap-6 py-4 lg:py-5">
+    <a href={withBase("/")} class="group flex flex-col leading-none" aria-label="YEVCHENKO COSMETOLOGY — на головну">
+      <span class="font-display text-[1.35rem] tracking-[0.16em] text-ink md:text-[1.5rem]">YEVCHENKO</span>
+      <span class="mt-1 text-[0.5rem] font-medium tracking-[0.42em] text-muted md:text-[0.55rem]">COSMETOLOGY</span>
+    </a>
+
+    <nav class="hidden items-center gap-6 lg:flex" aria-label="Головна навігація">
+      {
+        nav.map((item) => (
+          <a
+            href={withBase(item.href)}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+            class:list={[
+              'text-[0.8rem] tracking-[0.04em] transition-colors hover:text-bronze-dark',
+              isActive(item.href) ? 'text-bronze-dark' : 'text-ink/80',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a
+        href={bookingHref}
+        {...(bookingIsExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        class="hidden rounded-full bg-ink px-5 py-2.5 text-[0.78rem] tracking-[0.08em] text-cream transition-colors hover:bg-bronze-dark sm:inline-flex"
+        >Записатися</a
+      >
+
+      <details class="group relative lg:hidden">
+        <summary
+          class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line text-ink [&::-webkit-details-marker]:hidden"
+          aria-label="Меню"
+        >
+          <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true">
+            <path d="M0 1h16M0 5h16M0 9h16" stroke="currentColor" stroke-width="1" />
+          </svg>
+        </summary>
+        <div
+          class="absolute right-0 top-12 w-[min(18rem,calc(100vw-2.5rem))] border border-line bg-cream p-5 shadow-[0_24px_60px_-30px_rgba(50,42,35,0.45)]"
+        >
+          <nav class="flex flex-col" aria-label="Мобільна навігація">
+            {
+              nav.map((item) => (
+                <a
+                  href={withBase(item.href)}
+                  class="border-b border-line/60 py-3 font-display text-lg text-ink last:border-0"
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              ))
+            }
+            <a href={contactHref} class="mt-4 text-[0.8rem] tracking-[0.06em] text-bronze-dark"
+              >Як дістатися →</a
+            >
+          </nav>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,51 @@
+---
+import Figure from './Figure.astro';
+import BookingButton from './BookingButton.astro';
+import { bookingHref, bookingIsExternal, withBase } from '../lib/site';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  image?: string;
+  imageAlt?: string;
+  imageNote?: string;
+  showButtons?: boolean;
+}
+
+const {
+  eyebrow,
+  title,
+  lead,
+  image = '',
+  imageAlt = 'Фото кабінету',
+  imageNote = 'Тимчасове зображення.',
+  showButtons = true,
+} = Astro.props;
+---
+
+<section class="relative overflow-hidden border-b border-line bg-milk/40">
+  <div class="container-page grid gap-10 py-14 md:py-20 lg:grid-cols-12 lg:items-center lg:gap-16 lg:py-24">
+    <div class="lg:col-span-6">
+      {eyebrow && <p class="eyebrow mb-5">{eyebrow}</p>}
+      <h1 class="display-xl font-light text-ink">{title}</h1>
+      {lead && <p class="mt-6 max-w-xl text-[0.98rem] leading-relaxed text-muted md:text-[1.05rem]">{lead}</p>}
+      {
+        showButtons && (
+          <div class="mt-9 flex flex-wrap items-center gap-3">
+            <BookingButton />
+            <a
+              href={withBase("/posluhy/")}
+              class="inline-flex items-center gap-2 rounded-full border border-ink/20 px-6 py-3.5 text-[0.8rem] tracking-[0.1em] uppercase text-ink transition-colors hover:border-bronze hover:text-bronze-dark"
+            >
+              Послуги
+            </a>
+          </div>
+        )
+      }
+    </div>
+    <div class="lg:col-span-6">
+      <Figure src={image} alt={imageAlt} note={imageNote} ratio="5 / 4" loading="eager" />
+    </div>
+  </div>
+</section>

@@ -1,0 +1,57 @@
+---
+import { withBase } from '../lib/site';
+
+interface Props {
+  src?: string;
+  alt: string;
+  note?: string;
+  ratio?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  caption?: string;
+}
+
+const {
+  src = '',
+  alt,
+  note = 'Фото — тимчасове зображення. Замінити на фото кабінету / спеціалістки / процедури.',
+  ratio = '4 / 5',
+  class: className = '',
+  loading = 'lazy',
+  caption,
+} = Astro.props;
+---
+
+<figure class:list={['group', className]}>
+  <div class="relative overflow-hidden" style={`aspect-ratio: ${ratio};`}>
+    {
+      src ? (
+        <img
+          src={withBase(src)}
+          alt={alt}
+          loading={loading}
+          decoding="async"
+          class="h-full w-full object-cover"
+        />
+      ) : (
+        <div
+          class="photo-placeholder flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center"
+          role="img"
+          aria-label={alt}
+        >
+          <span class="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-bronze-dark/60"
+            >Фото · замінити</span
+          >
+          <span class="max-w-[22ch] font-display text-lg leading-snug text-bronze-dark/80">{alt}</span>
+        </div>
+      )
+    }
+  </div>
+  {
+    (caption || note) && (
+      <figcaption class="mt-3 text-xs leading-relaxed text-muted">
+        {caption || note}
+      </figcaption>
+    )
+  }
+</figure>

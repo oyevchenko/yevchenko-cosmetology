@@ -1,0 +1,62 @@
+---
+import { withBase } from '../lib/site';
+
+const brands = [
+  {
+    eyebrow: 'Франція',
+    name: 'Biologique Recherche',
+    text: 'Професійні процедури французького бренду з точним підбором активних засобів під стан шкіри.',
+    href: '/biologique-recherche/',
+    note: 'Фото продуктів — замінити',
+  },
+  {
+    eyebrow: 'США',
+    name: 'DMK',
+    text: 'Американський бренд професійної косметики. Напрям ферментотерапії та індивідуальні протоколи.',
+    href: '/dmk/',
+    note: 'Фото продуктів — замінити',
+  },
+];
+---
+
+<section class="border-y border-line bg-milk/40">
+  <div class="container-page py-16 md:py-20 lg:py-24">
+    <div class="max-w-2xl">
+      <p class="eyebrow mb-4">Професійні бренди</p>
+      <h2 class="display-m text-ink">Косметика, з якою працює кабінет</h2>
+      <p class="mt-4 text-[0.95rem] leading-relaxed text-muted">
+        У роботі використовуються професійна косметика та протоколи Biologique Recherche і DMK.
+        Детальніше про підхід кожного бренду — на окремих сторінках.
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
+      {
+        brands.map((brand) => (
+          <a
+            href={withBase(brand.href)}
+            class="group relative flex min-h-[18rem] flex-col justify-between overflow-hidden border border-line bg-cream p-7 transition-colors hover:border-bronze/50 md:p-10"
+          >
+            <div class="flex items-start justify-between gap-6">
+              <div>
+                <p class="eyebrow">{brand.eyebrow}</p>
+                <h3 class="mt-4 font-display text-[1.9rem] leading-tight text-ink md:text-[2.2rem]">
+                  {brand.name}
+                </h3>
+              </div>
+              <div class="photo-placeholder hidden h-24 w-24 shrink-0 items-center justify-center text-center text-[0.5rem] uppercase tracking-[0.2em] text-bronze-dark/60 sm:flex">
+                {brand.note}
+              </div>
+            </div>
+            <div>
+              <p class="mt-6 max-w-md text-sm leading-relaxed text-muted">{brand.text}</p>
+              <span class="mt-7 inline-flex items-center gap-2 text-[0.7rem] tracking-[0.16em] uppercase text-bronze-dark">
+                Про бренд <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>

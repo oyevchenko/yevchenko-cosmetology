@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SpecialistTeaser from '../components/SpecialistTeaser.astro';
+import BrandPanels from '../components/BrandPanels.astro';
+import Blocks from '../components/Blocks.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { getPage, getFeaturedServices } from '../lib/content';
+import { site, specialist, contacts, orTodo, instagramUrl, telegramUrl, withBase, absoluteUrl } from '../lib/site';
+
+const page = await getPage('home');
+const featured = await getFeaturedServices(4);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'HealthAndBeautyBusiness',
+  name: site.site.title,
+  description: site.site.defaultDescription,
+  url: site.site.url,
+  image: absoluteUrl('/og-default.png'),
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Київ',
+    ...(contacts.addressFull ? { streetAddress: contacts.addressFull } : {}),
+    addressCountry: 'UA',
+  },
+  ...(contacts.phone ? { telephone: contacts.phone } : {}),
+  ...(instagramUrl || telegramUrl
+    ? { sameAs: [instagramUrl, telegramUrl].filter(Boolean) }
+    : {}),
+  employee: {
+    '@type': 'Person',
+    name: specialist.name,
+    jobTitle: 'Лікарка-дерматовенерологиня, косметологиня',
+  },
+};
+---
+
+<BaseLayout title={page.data.seoTitle || site.site.defaultTitle} description={page.data.seoDescription || site.site.defaultDescription} schema={schema}>
+  <PageHero
+    eyebrow={page.data.eyebrow}
+    title="Догляд за шкірою, який починається з уваги"
+    lead={page.data.lead}
+    image={page.data.heroImage}
+    imageAlt={page.data.heroImageAlt}
+    imageNote={page.data.heroImageNote}
+  />
+
+  <section class="container-page py-16 md:py-20 lg:py-24">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <SectionHeading eyebrow="Послуги" title="Ключові напрямки догляду" intro="Повний перелік процедур — на сторінці послуг. Формат добирається індивідуально." />
+      <a href={withBase("/posluhy/")} class="shrink-0 text-[0.72rem] tracking-[0.16em] uppercase text-bronze-dark hover:text-ink">Усі послуги →</a>
+    </div>
+    <div class="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+      {featured.map((service, i) => <ServiceCard service={service} index={i} />)}
+    </div>
+  </section>
+
+  <SpecialistTeaser />
+  <BrandPanels />
+
+  <section class="container-page py-16 md:py-20 lg:py-24">
+    <div class="grid gap-10 border border-line p-7 md:p-12 lg:grid-cols-12 lg:gap-14">
+      <div class="lg:col-span-5">
+        <p class="eyebrow mb-4">Запис</p>
+        <h2 class="display-m text-ink">Як записатися</h2>
+        <p class="mt-4 text-[0.95rem] leading-relaxed text-muted">
+          Найпростіше — написати в месенджер. Коротко опишіть свій запит, і ми підкажемо,
+          з якої процедури або консультації доцільно почати.
+        </p>
+      </div>
+      <div class="lg:col-span-7">
+        <dl class="grid gap-5 sm:grid-cols-2">
+          <div class="border-t border-line pt-4">
+            <dt class="eyebrow">Телефон</dt>
+            <dd class="mt-2 text-[0.95rem] text-ink">{contacts.phoneDisplay ? contacts.phoneDisplay : orTodo('')}</dd>
+          </div>
+          <div class="border-t border-line pt-4">
+            <dt class="eyebrow">Адреса</dt>
+            <dd class="mt-2 text-[0.95rem] text-ink">{orTodo(contacts.addressFull || contacts.addressLine)}</dd>
+          </div>
+          <div class="border-t border-line pt-4">
+            <dt class="eyebrow">Графік</dt>
+            <dd class="mt-2 text-[0.95rem] text-ink">{site.schedule.note}</dd>
+          </div>
+          <div class="border-t border-line pt-4">
+            <dt class="eyebrow">Месенджери</dt>
+            <dd class="mt-2 flex flex-wrap gap-3 text-[0.95rem] text-ink">
+              {telegramUrl ? <a href={telegramUrl} target="_blank" rel="noopener noreferrer" class="underline decoration-line underline-offset-4 hover:text-bronze-dark">Telegram</a> : <span class="text-muted">Telegram — уточнити</span>}
+              {instagramUrl ? <a href={instagramUrl} target="_blank" rel="noopener noreferrer" class="underline decoration-line underline-offset-4 hover:text-bronze-dark">Instagram</a> : <span class="text-muted">Instagram — уточнити</span>}
+            </dd>
+          </div>
+        </dl>
+        <a href={withBase("/kontakty/")} class="mt-7 inline-flex items-center gap-2 text-[0.72rem] tracking-[0.16em] uppercase text-bronze-dark hover:text-ink">Контакти та карта →</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="border-t border-line">
+    <Blocks blocks={(page.data.blocks ?? []).filter((b: any) => b.type !== "cta")} />
+  </div>
+</BaseLayout>

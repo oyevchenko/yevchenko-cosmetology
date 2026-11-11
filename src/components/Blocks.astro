@@ -1,0 +1,156 @@
+---
+import BookingButton from './BookingButton.astro';
+import { withBase } from '../lib/site';
+import SectionHeading from './SectionHeading.astro';
+import Figure from './Figure.astro';
+
+interface Props {
+  blocks: any[];
+  index?: string;
+}
+
+const { blocks = [] } = Astro.props;
+const sectionBase = 'container-page py-16 md:py-20 lg:py-24';
+---
+
+{
+  blocks.map((block: any) => {
+    switch (block.type) {
+      case 'text':
+        return (
+          <section class={sectionBase}>
+            <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+              <div class="lg:col-span-4">
+                {block.title && <h2 class="display-m text-ink">{block.title}</h2>}
+              </div>
+              <div class="prose-quiet max-w-2xl text-[0.975rem] lg:col-span-8">
+                {block.body.map((p: string) => (
+                  <p>{p}</p>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+
+      case 'cards':
+        return (
+          <section class={`${sectionBase} border-t border-line`}>
+            {(block.title || block.intro) && (
+              <SectionHeading eyebrow="" title={block.title} intro={block.intro} />
+            )}
+            <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {block.items.map((item: any) => (
+                <div class="flex flex-col border border-line bg-porcelain/40 p-6">
+                  <h3 class="font-display text-xl leading-snug text-ink">{item.title}</h3>
+                  {item.text && <p class="mt-3 flex-1 text-sm leading-relaxed text-muted">{item.text}</p>}
+                  {item.href && (
+                    <a
+                      href={withBase(item.href)}
+                      class="mt-5 inline-flex items-center gap-2 text-[0.7rem] tracking-[0.16em] uppercase text-bronze-dark hover:text-ink"
+                    >
+                      {item.linkLabel || 'Детальніше'} <span aria-hidden="true">→</span>
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+
+      case 'list':
+        return (
+          <section class={sectionBase}>
+            <div class="grid gap-8 lg:grid-cols-12 lg:gap-12">
+              <div class="lg:col-span-4">
+                {block.title && <h2 class="display-m text-ink">{block.title}</h2>}
+                {block.intro && <p class="mt-4 text-sm leading-relaxed text-muted">{block.intro}</p>}
+              </div>
+              <div class="lg:col-span-8">
+                <ul class="grid gap-x-10 gap-y-4 sm:grid-cols-2">
+                  {block.items.map((item: string) => (
+                    <li class="flex gap-3 border-t border-line pt-4 text-[0.94rem] leading-relaxed text-ink/90">
+                      <span aria-hidden="true" class="mt-2.5 h-px w-4 shrink-0 bg-bronze" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+        );
+
+      case 'steps':
+        return (
+          <section class={`${sectionBase} border-t border-line`}>
+            <SectionHeading title={block.title} intro={block.intro} />
+            <ol class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {block.items.map((item: any, i: number) => (
+                <li class="border-t border-line pt-5">
+                  <span class="text-[0.65rem] tracking-[0.2em] text-muted">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <h3 class="mt-2 font-display text-xl text-ink">{item.title}</h3>
+                  {item.text && <p class="mt-2 text-sm leading-relaxed text-muted">{item.text}</p>}
+                </li>
+              ))}
+            </ol>
+          </section>
+        );
+
+      case 'gallery':
+        return (
+          <section class={`${sectionBase} border-t border-line`}>
+            <SectionHeading title={block.title} intro={block.intro} />
+            <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {block.items.map((item: any) => (
+                <Figure src={item.src} alt={item.alt || 'Фото'} ratio="1 / 1" note="" />
+              ))}
+            </div>
+          </section>
+        );
+
+      case 'note':
+        return (
+          <section class={`${sectionBase} border-t border-line`}>
+            <div class="border-l-2 border-bronze/50 bg-milk/50 py-8 pl-6 pr-4 md:pl-10">
+              {block.title && <p class="eyebrow mb-3">{block.title}</p>}
+              <div class="prose-quiet max-w-2xl text-[0.95rem] text-ink/85">
+                {block.body.map((p: string) => (
+                  <p>{p}</p>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+
+      case 'quote':
+        return (
+          <section class={sectionBase}>
+            <blockquote class="mx-auto max-w-3xl text-center">
+              <p class="font-display text-2xl leading-snug text-ink md:text-[2rem]">
+                «{block.text}»
+              </p>
+              {block.source && <footer class="mt-6 text-xs tracking-[0.14em] uppercase text-muted">{block.source}</footer>}
+            </blockquote>
+          </section>
+        );
+
+      case 'cta':
+        return (
+          <section class={`${sectionBase} border-t border-line`}>
+            <div class="mx-auto max-w-2xl text-center">
+              <h2 class="display-m text-ink">{block.title}</h2>
+              {block.text && <p class="mt-4 text-[0.95rem] leading-relaxed text-muted">{block.text}</p>}
+              <div class="mt-8">
+                <BookingButton label={block.label || 'Записатися'} />
+              </div>
+            </div>
+          </section>
+        );
+
+      default:
+        return null;
+    }
+  })
+}
+---

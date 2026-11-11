@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Blocks from '../components/Blocks.astro';
+import { getPage } from '../lib/content';
+import { site } from '../lib/site';
+
+const page = await getPage('domashnii-dohliad');
+---
+
+<BaseLayout
+  title={page.data.seoTitle || `${page.data.title} — ${site.site.title}`}
+  description={page.data.seoDescription || site.site.defaultDescription}
+  image={page.data.heroImage || undefined}
+>
+  <PageHero
+    eyebrow={page.data.eyebrow}
+    title={page.data.title}
+    lead={page.data.lead}
+    image={page.data.heroImage}
+    imageAlt={page.data.heroImageAlt}
+    imageNote={page.data.heroImageNote}
+    showButtons={false}
+  />
+  <Blocks blocks={page.data.blocks ?? []} />
+</BaseLayout>

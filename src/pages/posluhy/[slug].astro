@@ -1,0 +1,155 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Figure from '../../components/Figure.astro';
+import BookingButton from '../../components/BookingButton.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { getServices, serviceHref } from '../../lib/content';
+import { site, TODO, isTodo, withBase, absoluteUrl } from '../../lib/site';
+
+export const getStaticPaths = (async () => {
+  const services = await getServices();
+  return services.map((service) => ({
+    params: { slug: service.id },
+    props: { service, all: services },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { service, all } = Astro.props as Props;
+const { Content } = await render(service);
+const data = service.data;
+
+const related = all.filter((s) => s.id !== service.id).slice(0, 3);
+
+const title = data.seoTitle || `${data.title} — YEVCHENKO COSMETOLOGY`;
+const description = data.seoDescription || data.summary;
+const canonical = absoluteUrl(serviceHref(service.id));
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: data.title,
+  description: data.summary,
+  serviceType: data.title,
+  url: canonical,
+  areaServed: { '@type': 'City', name: 'Київ' },
+  provider: {
+    '@type': 'HealthAndBeautyBusiness',
+    name: site.site.title,
+    address: { '@type': 'PostalAddress', addressLocality: 'Київ', addressCountry: 'UA' },
+  },
+};
+---
+
+<BaseLayout title={title} description={description} schema={schema}>
+  <article>
+    <section class="border-b border-line bg-milk/40">
+      <div class="container-page grid gap-10 py-12 md:py-16 lg:grid-cols-12 lg:items-start lg:gap-16">
+        <div class="lg:col-span-7">
+          <nav class="mb-6 text-[0.7rem] tracking-[0.14em] uppercase text-muted" aria-label="Навігаційний ланцюжок">
+            <a href={withBase("/")} class="hover:text-bronze-dark">Головна</a>
+            <span class="mx-2" aria-hidden="true">/</span>
+            <a href={withBase("/posluhy/")} class="hover:text-bronze-dark">Послуги</a>
+          </nav>
+          <h1 class="display-l text-ink">{data.title}</h1>
+          <p class="mt-5 max-w-2xl text-[1rem] leading-relaxed text-muted">{data.summary}</p>
+
+          <dl class="mt-9 grid gap-x-8 gap-y-4 sm:grid-cols-3">
+            <div class="border-t border-line pt-3">
+              <dt class="eyebrow">Тривалість</dt>
+              <dd class:list={['mt-2 text-sm', isTodo(data.duration) ? 'text-bronze-dark' : 'text-ink']}>
+                {isTodo(data.duration) ? TODO : data.duration}
+              </dd>
+            </div>
+            <div class="border-t border-line pt-3">
+              <dt class="eyebrow">Вартість</dt>
+              <dd class:list={['mt-2 text-sm', isTodo(data.price) ? 'text-bronze-dark' : 'text-ink']}>
+                {isTodo(data.price) ? TODO : data.price}
+              </dd>
+            </div>
+            <div class="border-t border-line pt-3">
+              <dt class="eyebrow">Запис</dt>
+              <dd class="mt-2 text-sm text-ink">Через месенджер</dd>
+            </div>
+          </dl>
+
+          <div class="mt-9 flex flex-wrap items-center gap-3">
+            <BookingButton />
+            <a
+              href={withBase("/posluhy/")}
+              class="inline-flex items-center gap-2 rounded-full border border-ink/20 px-6 py-3.5 text-[0.8rem] tracking-[0.1em] uppercase text-ink transition-colors hover:border-bronze hover:text-bronze-dark"
+              >Усі послуги</a
+            >
+          </div>
+        </div>
+
+        <div class="lg:col-span-5">
+          <Figure
+            src={data.image}
+            alt={data.imageAlt || data.title}
+            note={data.imageNote || 'Тимчасове зображення. Замінити на фото процедури.'}
+            ratio="4 / 5"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="container-page grid gap-10 py-14 md:py-20 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-7 lg:col-start-2">
+        {
+          data.needs.length > 0 && (
+            <div class="mb-12 border border-line bg-porcelain/40 p-6 md:p-8">
+              <p class="eyebrow mb-4">Для яких потреб шкіри може бути актуальна</p>
+              <ul class="grid gap-3 sm:grid-cols-2">
+                {data.needs.map((need) => (
+                  <li class="flex gap-3 text-[0.92rem] leading-relaxed text-ink/90">
+                    <span aria-hidden="true" class="mt-2.5 h-px w-4 shrink-0 bg-bronze" />
+                    <span>{need}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        <div class="md-body prose-quiet max-w-none text-[0.975rem]">
+          <Content />
+        </div>
+
+        {
+          data.needsReview && (
+            <p class="mt-12 border-l-2 border-bronze/50 bg-milk/50 py-3 pl-4 text-xs leading-relaxed text-muted">
+              Текст сторінки є чернеткою. Остаточне формулювання протоколу, тривалості та
+              протипоказань погоджується зі спеціалісткою до публікації.
+            </p>
+          )
+        }
+      </div>
+    </section>
+
+    <section class="border-t border-line">
+      <div class="container-page py-14 md:py-20">
+        <p class="eyebrow mb-4">Інші процедури</p>
+        <div class="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          {related.map((item, i) => <ServiceCard service={item} index={i} />)}
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-line bg-milk/40">
+      <div class="container-page py-14 text-center md:py-20">
+        <h2 class="display-m text-ink">Записатися на {data.shortTitle || data.title}</h2>
+        <p class="mx-auto mt-4 max-w-xl text-[0.95rem] leading-relaxed text-muted">
+          Напишіть у месенджер, щоб обрати зручний час. Якщо є сумніви щодо процедури —
+          почніть із короткої консультації.
+        </p>
+        <div class="mt-8">
+          <BookingButton />
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>

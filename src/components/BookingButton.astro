@@ -1,0 +1,41 @@
+---
+import { bookingHref, bookingIsExternal } from '../lib/site';
+
+interface Props {
+  label?: string;
+  variant?: 'solid' | 'outline' | 'light';
+  class?: string;
+  href?: string;
+  external?: boolean;
+  full?: boolean;
+}
+
+const {
+  label = 'Записатися',
+  variant = 'solid',
+  class: className = '',
+  href = bookingHref,
+  external = bookingIsExternal,
+  full = false,
+} = Astro.props;
+
+const styles = {
+  solid: 'bg-ink text-cream hover:bg-bronze-dark',
+  outline: 'border border-ink/25 text-ink hover:border-bronze hover:text-bronze-dark',
+  light: 'bg-cream/90 text-ink hover:bg-cream',
+};
+---
+
+<a
+  href={href}
+  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+  class:list={[
+    'inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[0.8rem] tracking-[0.1em] uppercase transition-colors duration-200',
+    styles[variant],
+    full && 'w-full',
+    className,
+  ]}
+>
+  {label}
+  <span aria-hidden="true" class="text-[0.95em]">→</span>
+</a>

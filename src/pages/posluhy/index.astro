@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Blocks from '../../components/Blocks.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { getPage, getServices } from '../../lib/content';
+import { site, absoluteUrl } from '../../lib/site';
+
+const page = await getPage('posluhy');
+const services = await getServices();
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Послуги та процедури — YEVCHENKO COSMETOLOGY',
+  itemListElement: services.map((service, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: service.data.title,
+    url: absoluteUrl(`/posluhy/${service.id}/`),
+  })),
+};
+---
+
+<BaseLayout
+  title={page.data.seoTitle || `${page.data.title} — ${site.site.title}`}
+  description={page.data.seoDescription || site.site.defaultDescription}
+  schema={schema}
+>
+  <PageHero
+    eyebrow={page.data.eyebrow}
+    title={page.data.title}
+    lead={page.data.lead}
+    image={page.data.heroImage}
+    imageAlt={page.data.heroImageAlt}
+    imageNote={page.data.heroImageNote}
+    showButtons={false}
+  />
+
+  <section class="container-page py-14 md:py-20">
+    <ul class="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      {services.map((service, i) => <li><ServiceCard service={service} index={i} /></li>)}
+    </ul>
+  </section>
+
+  <div class="border-t border-line">
+    <Blocks blocks={page.data.blocks} />
+  </div>
+</BaseLayout>

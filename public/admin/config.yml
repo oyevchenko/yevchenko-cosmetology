@@ -1,0 +1,220 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Локальний режим: npx decap-server + npm run dev -> http://localhost:4321/admin/
+local_backend: true
+locale: uk
+publish_mode: editorial_workflow
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+site_url: https://oyevchenko.github.io/yevchenko-cosmetology
+logo_url: /yevchenko-cosmetology/favicon.svg
+
+collections:
+  - name: settings
+    label: Налаштування сайту
+    label_singular: Налаштування
+    files:
+      - name: site
+        label: Контакти, навігація, SEO
+        file: src/content/site.json
+        description: >-
+          Головний файл налаштувань. Заповніть поля з позначкою TODO: телефон,
+          адресу, посилання на Instagram і Telegram, графік, URL сайту.
+        fields:
+          - name: site
+            label: Сайт і SEO
+            widget: object
+            fields:
+              - { name: url, label: Адреса сайту (https://...), widget: string }
+              - { name: title, label: Назва, widget: string }
+              - { name: tagline, label: Короткий підпис, widget: string }
+              - { name: defaultTitle, label: Title за замовчуванням, widget: string }
+              - { name: defaultDescription, label: Description за замовчуванням, widget: text }
+              - { name: ogImage, label: OG-зображення (шлях у /public), widget: string, required: false }
+          - name: specialist
+            label: Спеціалістка
+            widget: object
+            fields:
+              - { name: name, label: Ім'я, widget: string }
+              - { name: title, label: Професійний титул, widget: string }
+              - { name: since, label: Рік початку практики, widget: string }
+          - name: contacts
+            label: Контакти
+            widget: object
+            fields:
+              - { name: phone, label: Телефон для tel: (+380...), widget: string, required: false }
+              - { name: phoneDisplay, label: Телефон для показу, widget: string, required: false }
+              - { name: email, label: Email, widget: string, required: false }
+              - { name: addressLine, label: Коротка адреса, widget: string }
+              - { name: addressFull, label: Повна адреса, widget: string, required: false }
+              - { name: mapUrl, label: Посилання на маршрут (Google Maps), widget: string, required: false }
+              - { name: mapEmbedUrl, label: URL для iframe-карти, widget: string, required: false }
+              - { name: instagramHandle, label: Instagram (нікнейм), widget: string, required: false }
+              - { name: instagramUrl, label: Instagram (повний URL), widget: string, required: false }
+              - { name: telegramHandle, label: Telegram (нікнейм), widget: string, required: false }
+              - { name: telegramUrl, label: Telegram (повний URL), widget: string, required: false }
+              - { name: viberUrl, label: Viber (URL), widget: string, required: false }
+          - name: schedule
+            label: Графік роботи
+            widget: object
+            fields:
+              - { name: note, label: Примітка, widget: string }
+              - name: rows
+                label: Рядки графіка
+                widget: list
+                required: false
+                fields:
+                  - { name: days, label: Дні, widget: string }
+                  - { name: hours, label: Години, widget: string }
+          - name: navigation
+            label: Навігація
+            widget: list
+            fields:
+              - { name: label, label: Напис, widget: string }
+              - { name: href, label: Посилання, widget: string }
+          - name: footer
+            label: Футер
+            widget: object
+            fields:
+              - { name: legalNote, label: Правова примітка, widget: text }
+              - { name: copyright, label: Копірайт, widget: string }
+          - name: analytics
+            label: Аналітика
+            widget: object
+            fields:
+              - { name: note, label: Примітка, widget: text }
+              - { name: plausibleDomain, label: Plausible domain, widget: string, required: false }
+              - { name: gaMeasurementId, label: GA4 ID, widget: string, required: false }
+
+  - name: services
+    label: Послуги
+    label_singular: Послуга
+    folder: src/content/services
+    create: true
+    extension: md
+    format: frontmatter
+    slug: '{{fields.slug}}'
+    identifier_field: title
+    description: >-
+      Кожна процедура — окремий файл. Порядок у списку задає поле «Порядок».
+      Порожні поля показуються на сайті як «[уточнити у спеціаліста]».
+    fields:
+      - { name: title, label: Назва процедури, widget: string }
+      - { name: slug, label: URL-адреса (латиницею), widget: string, hint: 'напр. chystka-oblychchia' }
+      - { name: shortTitle, label: Коротка назва, widget: string, required: false }
+      - { name: order, label: Порядок, widget: number, default: 99 }
+      - { name: featured, label: Показувати на головній, widget: boolean, default: false }
+      - { name: summary, label: Короткий опис, widget: text }
+      - name: needs
+        label: Для яких потреб шкіри
+        widget: list
+        required: false
+        field: { name: need, label: Потреба, widget: string }
+      - { name: duration, label: Тривалість, widget: string, required: false, hint: 'Залиште порожнім, якщо ще не погоджено' }
+      - { name: price, label: Вартість, widget: string, required: false, hint: 'Залиште порожнім, якщо ще не погоджено' }
+      - { name: image, label: Фото (шлях у /public/images), widget: string, required: false }
+      - { name: imageAlt, label: Alt-текст фото, widget: string, required: false }
+      - { name: imageNote, label: Примітка до фото, widget: string, required: false }
+      - { name: needsReview, label: Текст потребує погодження, widget: boolean, default: true }
+      - { name: seoTitle, label: SEO title, widget: string, required: false }
+      - { name: seoDescription, label: SEO description, widget: text, required: false }
+      - { name: body, label: Текст сторінки (Markdown), widget: markdown }
+
+  - name: pages
+    label: Сторінки
+    label_singular: Сторінка
+    folder: src/content/pages
+    create: false
+    extension: json
+    format: json
+    identifier_field: title
+    description: >-
+      Тексти — сторінка за сторінкою. Блоки можна редагувати, додавати й
+      переставляти. Видаляйте блок, лише якщо впевнені в результаті.
+    fields:
+      - { name: title, label: Назва сторінки (внутрішня), widget: string }
+      - { name: seoTitle, label: SEO title, widget: string, required: false }
+      - { name: seoDescription, label: SEO description, widget: text, required: false }
+      - { name: eyebrow, label: Надзаголовок, widget: string, required: false }
+      - { name: lead, label: Вступний текст, widget: text, required: false }
+      - { name: heroImage, label: Головне фото, widget: string, required: false }
+      - { name: heroImageAlt, label: Alt-текст головного фото, widget: string, required: false }
+      - { name: heroImageNote, label: Примітка до фото, widget: string, required: false }
+      - name: blocks
+        label: Блоки
+        widget: list
+        types:
+          - name: text
+            label: Текст
+            fields:
+              - { name: type, widget: hidden, default: text }
+              - { name: title, label: Заголовок, widget: string, required: false }
+              - { name: body, label: Абзаци, widget: list, field: { name: paragraph, label: Абзац, widget: text } }
+          - name: cards
+            label: Картки
+            fields:
+              - { name: type, widget: hidden, default: cards }
+              - { name: title, label: Заголовок, widget: string, required: false }
+              - { name: intro, label: Вступ, widget: text, required: false }
+              - name: items
+                label: Картки
+                widget: list
+                fields:
+                  - { name: title, label: Назва, widget: string }
+                  - { name: text, label: Текст, widget: text, required: false }
+                  - { name: href, label: Посилання, widget: string, required: false }
+                  - { name: linkLabel, label: Напис посилання, widget: string, required: false }
+          - name: list
+            label: Список
+            fields:
+              - { name: type, widget: hidden, default: list }
+              - { name: title, label: Заголовок, widget: string, required: false }
+              - { name: intro, label: Вступ, widget: text, required: false }
+              - { name: items, label: Пункти, widget: list, field: { name: item, label: Пункт, widget: string } }
+          - name: steps
+            label: Кроки
+            fields:
+              - { name: type, widget: hidden, default: steps }
+              - { name: title, label: Заголовок, widget: string, required: false }
+              - { name: intro, label: Вступ, widget: text, required: false }
+              - name: items
+                label: Кроки
+                widget: list
+                fields:
+                  - { name: title, label: Назва кроку, widget: string }
+                  - { name: text, label: Опис, widget: text, required: false }
+          - name: gallery
+            label: Галерея
+            fields:
+              - { name: type, widget: hidden, default: gallery }
+              - { name: title, label: Заголовок, widget: string, required: false }
+              - { name: intro, label: Вступ, widget: text, required: false }
+              - name: items
+                label: Зображення
+                widget: list
+                fields:
+                  - { name: src, label: Шлях до файлу, widget: string, required: false }
+                  - { name: alt, label: Alt-текст, widget: string }
+                  - { name: caption, label: Підпис, widget: string, required: false }
+          - name: note
+            label: Примітка
+            fields:
+              - { name: type, widget: hidden, default: note }
+              - { name: title, label: Заголовок, widget: string, required: false }
+              - { name: body, label: Абзаци, widget: list, field: { name: paragraph, label: Абзац, widget: text } }
+          - name: quote
+            label: Цитата
+            fields:
+              - { name: type, widget: hidden, default: quote }
+              - { name: text, label: Текст цитати, widget: text }
+              - { name: source, label: Джерело, widget: string, required: false }
+          - name: cta
+            label: Заклик до запису
+            fields:
+              - { name: type, widget: hidden, default: cta }
+              - { name: title, label: Заголовок, widget: string }
+              - { name: text, label: Текст, widget: text, required: false }
+              - { name: label, label: Напис кнопки, widget: string, required: false }

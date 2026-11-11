@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Blocks from '../components/Blocks.astro';
+import { getPage } from '../lib/content';
+import { site, specialist } from '../lib/site';
+
+const page = await getPage('pro-mene');
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: specialist.name,
+  jobTitle: 'Лікарка-дерматовенерологиня, косметологиня',
+  worksFor: { '@type': 'HealthAndBeautyBusiness', name: site.site.title },
+};
+---
+
+<BaseLayout
+  title={page.data.seoTitle || `${page.data.title} — ${site.site.title}`}
+  description={page.data.seoDescription || site.site.defaultDescription}
+  schema={schema}
+>
+  <PageHero
+    eyebrow={page.data.eyebrow}
+    title={specialist.name}
+    lead={page.data.lead}
+    image={page.data.heroImage}
+    imageAlt={page.data.heroImageAlt}
+    imageNote={page.data.heroImageNote}
+  />
+  <Blocks blocks={page.data.blocks ?? []} />
+</BaseLayout>
